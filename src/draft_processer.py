@@ -23,6 +23,9 @@ class AcummulatedScore(object):
     def __repr__(self):
         return self.__str__()
 
+    def home_wins(self):
+        return self.home_points > self.away_points
+
 from bisect import insort_left
 
 class RankingCandidate():
@@ -99,7 +102,7 @@ for l in l1:
 
 l3 = map(lambda x: x[1:], filter(lambda x: x[0] == 'SCORED', l2)) # filter column that is redundant #send
 
-c = Counter()
+games = Counter()
 for l in l3:
     date = l[0]
     home_team = l[1]
@@ -112,9 +115,9 @@ for l in l3:
         acummulated_score = AcummulatedScore(points, 0)
     else:
         acummulated_score = AcummulatedScore(0, points)
-    c.update({key: acummulated_score})
+    games.update({key: acummulated_score})
 
-print(c)
+print(games)
 
 
 
@@ -133,19 +136,79 @@ for l in l1:
 
 l3 = map(lambda x: x[1:], filter(lambda x: x[0] == 'SCORED', l2)) # filter column that is redundant #send
 
-c = Counter()
+players_points = Counter()
 for l in l3:
     player = l[1]
     points = int(l[0])
-    c.update({player: points})
+    players_points.update({player: points})
 
 
 ranking = Ranking(10)
-for player in c:
-    ranking.consider(RankingCandidate(player, c.get(player)))
+for player in players_points:
+    ranking.consider(RankingCandidate(player, players_points.get(player)))
 
 print(ranking)
 ## Res 2
 
 
+# Res 3.a
 
+home_wins = 0
+total_games = 0
+for game in games:
+    total_games += 1 
+    if games.get(game).home_wins():
+        home_wins += 1
+
+print(float(home_wins) / total_games)
+
+
+
+## Res 3.a
+
+
+# Res 3.b 2pts
+
+
+l2 = []
+for l in l1:
+    l2.append([l['current shot outcome'],
+               l['points']]) #send
+
+
+l3 = filter(lambda x: int(x[1]) == 2, l2)
+
+scored_2pts_shots = 0
+total_2pts_shots = 0
+
+
+for shot in l3:
+    total_2pts_shots += 1 
+    if shot[0] == 'SCORED':
+        scored_2pts_shots += 1
+    
+print(float(scored_2pts_shots) / total_2pts_shots)
+
+
+
+## Res 3.b
+
+
+# Res 3.c 3pts
+
+
+
+l3 = filter(lambda x: int(x[1]) == 3, l2)
+
+scored_3pts_shots = 0
+total_3pts_shots = 0
+
+
+for shot in l3:
+    total_3pts_shots += 1 
+    if shot[0] == 'SCORED':
+        scored_3pts_shots += 1
+    
+print(float(scored_3pts_shots) / total_3pts_shots)
+
+## Res 3.c
