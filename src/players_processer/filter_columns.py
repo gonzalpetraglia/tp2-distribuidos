@@ -23,6 +23,7 @@ class FilterColumns(Process):
 
     def _get_row(self):
         x = self.socket.recv_pyobj()
+
         return x
 
     def _send_filtered_columns(self, columns):
@@ -34,15 +35,13 @@ class FilterColumns(Process):
 
         while row != 'END':
             self._send_filtered_columns([row['current shot outcome'],
-                    row['date'],
-                    row['home team'],
-                    row['away team'],
                     row['points'],
-                    row['shoot team']])
+                    row['shoot player']])
 
             row = self._get_row()
 
         self._send_filtered_columns('END')
+        print('Sent End c')
         self._close()
 
     def _close(self):

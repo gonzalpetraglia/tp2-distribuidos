@@ -1,6 +1,6 @@
 from games_calculator.games_calculator import GamesCalculator
 from games_summarier import GamesSummarier
-from players_processer import PlayersProcesser
+from players_processer.players_processer import PlayersProcesser
 from points_summarier import PointsSummarier
 from reader import Reader
 from time import sleep

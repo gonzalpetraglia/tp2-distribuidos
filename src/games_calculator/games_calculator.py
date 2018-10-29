@@ -7,7 +7,6 @@ from .sum_up_games import SumUpGames
 from zmq_streamer import Streamer
 
 
-from score import AcummulatedScore
 END_TOKEN = 'END'
 class GamesCalculator(Process):
 

@@ -23,5 +23,4 @@ class AcummulatedScore(object):
 
     @classmethod
     def from_string(cls, string):
-        print(string)
         return cls(string.split('-')[0], string.split('-')[1])
