@@ -10,29 +10,30 @@ class GamesSummarier(Process):
 
     def _init(self):
         self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.SUB)
+        self.socket = self.context.socket(zmq.PULL)
         # We can connect to several endpoints if we desire, and receive from all.
         self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
 
-        self.socket.setsockopt_string(zmq.SUBSCRIBE, '')
-
     def _get_game(self):
-        return self.socket.recv_pyobj()
+        return self.socket.recv_string()
+
 
     def run(self):
         self._init()
         
         home_wins = 0
         total_games = 0
-        score = self._get_game()
+        score_string = self._get_game()
 
-        while score != 'END':
+        while score_string != 'END':
+            score = AcummulatedScore.from_string(score_string)
+
             
             total_games += 1 
             if score.home_wins():
                 home_wins += 1
             
-            score = self._get_game()
+            score_string = self._get_game()
 
 
         print('% wins home team:' + str(float(home_wins) / total_games))

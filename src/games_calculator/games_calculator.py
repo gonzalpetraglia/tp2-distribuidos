@@ -1,74 +1,40 @@
 from multiprocessing import Process
 from collections import Counter
 import zmq
+from .filter_columns import FilterColumns
+from .filter_scored import FilterScored
+from .sum_up_games import SumUpGames
+from zmq_streamer import Streamer
+
 
 from score import AcummulatedScore
 END_TOKEN = 'END'
 class GamesCalculator(Process):
 
-    def __init__(self, incoming_address, incoming_port):
+    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port):
         self.incoming_address = incoming_address
         self.incoming_port = incoming_port
+        self.outgoing_address = outgoing_address
+        self.outgoing_port = outgoing_port
         super(GamesCalculator, self).__init__()
 
-    def _init(self):
-        self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.SUB)
-        # We can connect to several endpoints if we desire, and receive from all.
-        self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
-        self.socket.setsockopt_string(zmq.SUBSCRIBE, '')
-        
-        self.socket2 = self.context.socket(zmq.PUB)
-        self.socket2.bind('tcp://{}:{}'.format('127.0.0.1', '2001'))
-        
-
-    def _get_row(self):
-        return self.socket.recv_pyobj()
-
-    def _send_game(self, result):
-        self.socket2.send_pyobj(result)
 
     def run(self):
-        self._init()
-        row = self._get_row()
-        l2 = []
-        while row != 'END':
+        # streamer that subscribes?
+        filter_columns = FilterColumns(self.incoming_address, self.incoming_port, '127.0.0.1', 2010)
+        #streamer_filtered_columns = Streamer(2010, 2011, '127.0.0.1', '127.0.0.1')
+        filter_scored = FilterScored('127.0.0.1', 2010, '127.0.0.1', 2012)
+        # streamer_scored_goals = Streamer(2012,2013, '127.0.0.1', '127.0.0.1')
+        games_summer = SumUpGames('127.0.0.1', 2012, self.outgoing_address, self.outgoing_port)
 
-            l2.append([row['current shot outcome'],
-                    row['date'],
-                    row['home team'],
-                    row['away team'],
-                    row['points'],
-                    row['shoot team']])# send
-            row = self._get_row()
+        filter_columns.start()
+        #streamer_filtered_columns.start()
+        filter_scored.start()
+        # streamer_scored_goals.start()
+        games_summer.start()
 
-
-
-        l3 = map(lambda x: x[1:], filter(lambda x: x[0] == 'SCORED', l2)) # filter column that is redundant #send
-
-        games = Counter()
-        for l in l3:
-            date = l[0]
-            home_team = l[1]
-            away_team = l[2]
-            points = l[3]
-            shot_team =  l[4]
-            key = '{}_{}_{}'.format(date, home_team, away_team)
-            points =  int(l[3])
-            if shot_team == home_team:
-                acummulated_score = AcummulatedScore(points, 0)
-            else:
-                acummulated_score = AcummulatedScore(0, points)
-            games.update({key: acummulated_score})
-
-        print('Games: ' + str(games))
-
-        for game in games:
-            self._send_game(games.get(game))
-        self._send_game('END')
-        self._close()
-
-    def _close(self):
-        self.socket.close()
-        self.socket2.close()
-        self.context.term()
+        filter_columns.join()
+        #streamer_filtered_columns.join()
+        filter_scored.join()
+        # streamer_scored_goals.join()
+        games_summer.join()

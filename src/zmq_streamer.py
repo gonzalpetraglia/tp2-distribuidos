@@ -21,8 +21,8 @@ class Streamer(Process):
 
             zmq.device(zmq.STREAMER, frontend, backend)
         except Exception as e:
-            print e
-            print "bringing down zmq device"
+            print (e)
+            print ("bringing down zmq device")
         finally:
             frontend.close()
             backend.close()
