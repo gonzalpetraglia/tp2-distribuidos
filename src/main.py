@@ -26,20 +26,11 @@ if __name__ == '__main__':
     reader.start()
 
 
-    print('Wait reader')
     reader.join()
-    print('Wait games calculator')
     games_calculator.join()
-    print('Wait games summarier')
     games_summarier.join()
-
-    print('Wait players processers')
     players_processer.join()
-
-    print('Wait points summarier 3')
     points_summarier3.join()
-
-    print('Wait games summarier 2')
     points_summarier2.join()
 
 

@@ -18,7 +18,7 @@ class SumUpPlayers(Process):
         self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
         
         self.socket2 = self.context.socket(zmq.PUSH)
-        self.socket2.bind('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
+        self.socket2.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
         
 
     def _get_row(self):
@@ -43,8 +43,6 @@ class SumUpPlayers(Process):
             points = int(row[0])
             players_points.update({player: points})
             row = self._get_row()
-
-        print('Games: ' + str(player))
 
         for player in players_points:
             self._send_player([player, players_points.get(player)])

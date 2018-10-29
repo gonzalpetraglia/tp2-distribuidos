@@ -4,7 +4,7 @@ import zmq
 from .filter_columns import FilterColumns
 from .filter_scored import FilterScored
 from .sum_up_games import SumUpGames
-from zmq_streamer import Streamer
+from streamer import Streamer
 
 
 END_TOKEN = 'END'

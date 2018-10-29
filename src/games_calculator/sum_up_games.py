@@ -50,7 +50,7 @@ class SumUpGames(Process):
             games.update({key: acummulated_score})
             row = self._get_row()
 
-        print('Games: ' + str(games))
+        print('Games: ' + str(games)[0:100])
 
         for game in games:
             self._send_result(str(games.get(game)))

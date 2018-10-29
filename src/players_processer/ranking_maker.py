@@ -16,12 +16,11 @@ class RankingMaker(Process):
     def _init(self):
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PULL)
-        self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        self.socket.bind('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
 
 
     def _get_row(self):
         x = self.socket.recv_pyobj()
-        print('Ranking got '+ str(x))
         return x
 
     def run(self):
