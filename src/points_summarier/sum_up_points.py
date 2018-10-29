@@ -28,7 +28,6 @@ class SumUpPoints(Process):
         self._init()
 
         row = self._get_row()
-        print("jgfadjlkgjdjagjkdjaslfjsdlkjalkfsjdl " + str(row))
         players_points = Counter()
         scored_shots = 0
         total_shots = 0
@@ -38,7 +37,6 @@ class SumUpPoints(Process):
             if row[0] == 'SCORED':
                 scored_shots += 1
             row = self._get_row()
-            print("jgfadjlkgjdjagjkdjaslfjsdlkjalkfsjdl " + str(row))
 
         print('% {}pts scored: {}'.format(self.points_filter, float(scored_shots) / total_shots))
 
