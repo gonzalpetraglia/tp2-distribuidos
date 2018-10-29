@@ -21,19 +21,19 @@ class GamesCalculator(Process):
     def run(self):
         # streamer that subscribes?
         filter_columns = FilterColumns(self.incoming_address, self.incoming_port, '127.0.0.1', 2010)
-        #streamer_filtered_columns = Streamer(2010, 2011, '127.0.0.1', '127.0.0.1')
-        filter_scored = FilterScored('127.0.0.1', 2010, '127.0.0.1', 2012)
-        # streamer_scored_goals = Streamer(2012,2013, '127.0.0.1', '127.0.0.1')
-        games_summer = SumUpGames('127.0.0.1', 2012, self.outgoing_address, self.outgoing_port)
+        streamer_filtered_columns = Streamer('127.0.0.1', 2010, '127.0.0.1', 2011)
+        filter_scored = FilterScored('127.0.0.1', 2011, '127.0.0.1', 2012)
+        streamer_scored_goals = Streamer('127.0.0.1', 2012, '127.0.0.1', 2013)
+        games_summer = SumUpGames('127.0.0.1', 2013, self.outgoing_address, self.outgoing_port)
 
         filter_columns.start()
-        #streamer_filtered_columns.start()
+        streamer_filtered_columns.start()
         filter_scored.start()
-        # streamer_scored_goals.start()
+        streamer_scored_goals.start()
         games_summer.start()
 
         filter_columns.join()
-        #streamer_filtered_columns.join()
+        streamer_filtered_columns.join()
         filter_scored.join()
-        # streamer_scored_goals.join()
+        streamer_scored_goals.join()
         games_summer.join()

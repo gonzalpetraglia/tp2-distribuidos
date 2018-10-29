@@ -17,7 +17,7 @@ class FilterScored(Process):
         self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
 
         self.socket2 = self.context.socket(zmq.PUSH)
-        self.socket2.bind('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
+        self.socket2.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
 
     def _get_row(self):
         x = self.socket.recv_pyobj()

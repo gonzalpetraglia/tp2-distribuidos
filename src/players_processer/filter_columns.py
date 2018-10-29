@@ -41,7 +41,6 @@ class FilterColumns(Process):
             row = self._get_row()
 
         self._send_filtered_columns('END')
-        print('Sent End c')
         self._close()
 
     def _close(self):
