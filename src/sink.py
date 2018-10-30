@@ -27,8 +27,8 @@ class Sink(Process):
         with open(self.name_file, 'w') as output_file:
             while result != 'END':
                 output_file.write(result)
+                output_file.write('\n')
                 result = self._get_result()
-                print(result)
 
         self._close()
 

@@ -5,7 +5,7 @@ from .filter_columns import FilterColumns
 from .filter_scored import FilterScored
 from .sum_up_games import SumUpGames
 from streamer import Streamer
-
+from sink import Sink
 
 END_TOKEN = 'END'
 class GamesCalculator(Process):
@@ -24,16 +24,19 @@ class GamesCalculator(Process):
         streamer_filtered_columns = Streamer('127.0.0.1', 2010, '127.0.0.1', 2011)
         filter_scored = FilterScored('127.0.0.1', 2011, '127.0.0.1', 2012)
         streamer_scored_goals = Streamer('127.0.0.1', 2012, '127.0.0.1', 2013)
-        games_summer = SumUpGames('127.0.0.1', 2013, self.outgoing_address, self.outgoing_port)
+        games_summer = SumUpGames('127.0.0.1', 2013, self.outgoing_address, self.outgoing_port, '127.0.0.1', 2014)
+        sink = Sink('127.0.0.1', 2014, 'games.txt')
 
         filter_columns.start()
         streamer_filtered_columns.start()
         filter_scored.start()
         streamer_scored_goals.start()
         games_summer.start()
+        sink.start()
 
         filter_columns.join()
         streamer_filtered_columns.join()
         filter_scored.join()
         streamer_scored_goals.join()
         games_summer.join()
+        sink.join()
