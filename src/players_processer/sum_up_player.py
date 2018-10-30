@@ -43,7 +43,7 @@ class SumUpPlayers(Process):
             points = int(row[0])
             players_points.update({player: points})
             row = self._get_row()
-
+            
         for player in players_points:
             self._send_player([player, players_points.get(player)])
 

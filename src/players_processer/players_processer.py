@@ -6,6 +6,7 @@ from .filter_scored import FilterScored
 from .sum_up_player import SumUpPlayers
 from .ranking_maker import RankingMaker
 from streamer import Streamer
+from sink import Sink
 
 
 END_TOKEN = 'END'
@@ -26,7 +27,8 @@ class PlayersProcesser(Process):
         filter_scored = FilterScored('127.0.0.1', 2021, '127.0.0.1', 2022)
         streamer_scored_goals = Streamer('127.0.0.1', 2022, '127.0.0.1', 2023)
         players_summer = SumUpPlayers('127.0.0.1', 2023, '127.0.0.1', 2024)
-        ranking_maker = RankingMaker('127.0.0.1', 2024)
+        ranking_maker = RankingMaker('127.0.0.1', 2024, '127.0.0.1', 2025)
+        sink = Sink('127.0.0.1', 2025, 'ranking-players.txt')
 
         filter_columns.start()
         streamer_filtered_columns.start()
@@ -34,6 +36,7 @@ class PlayersProcesser(Process):
         streamer_scored_goals.start()
         players_summer.start()
         ranking_maker.start()
+        sink.start()
 
 
 
@@ -43,3 +46,4 @@ class PlayersProcesser(Process):
         streamer_scored_goals.join()
         players_summer.join()
         ranking_maker.join()
+        sink.join()
