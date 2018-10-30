@@ -5,16 +5,20 @@ import zmq
 END_TOKEN = 'END'
 class SumUpPoints(Process):
 
-    def __init__(self, points_filter, incoming_address, incoming_port):
+    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port):
         self.incoming_address = incoming_address
-        self.incoming_port = incoming_port   
-        self.points_filter = points_filter
+        self.incoming_port = incoming_port
+        self.outgoing_address = outgoing_address
+        self.outgoing_port = outgoing_port   
         super(SumUpPoints, self).__init__()
 
     def _init(self):
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PULL)
         self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+      
+        self.socket2 = self.context.socket(zmq.PUSH)
+        self.socket2.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
       
 
     def _get_row(self):
@@ -23,6 +27,8 @@ class SumUpPoints(Process):
 
         return x
 
+    def _send_result(self, result):
+        self.socket2.send_string(result)
 
     def run(self):
         self._init()
@@ -38,12 +44,16 @@ class SumUpPoints(Process):
                 scored_shots += 1
             row = self._get_row()
 
-        print('% {}pts scored: {}'.format(self.points_filter, float(scored_shots) / total_shots))
+        result = '{}%'.format(float(scored_shots) / total_shots * 100)
+
+        self._send_result(result)
+        self._send_result('END')
 
         self._close()
 
     def _close(self):
         self.socket.close()
+        self.socket2.close()
         self.context.term()
 
 

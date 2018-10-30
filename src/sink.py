@@ -13,7 +13,7 @@ class Sink(Process):
         self.context = zmq.Context()
         self.socket = self.context.socket(zmq.PULL)
         # We can connect to several endpoints if we desire, and receive from all.
-        self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        self.socket.bind('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
 
     def _get_result(self):
         return self.socket.recv_string()
@@ -28,6 +28,7 @@ class Sink(Process):
             while result != 'END':
                 output_file.write(result)
                 result = self._get_result()
+                print(result)
 
         self._close()
 
