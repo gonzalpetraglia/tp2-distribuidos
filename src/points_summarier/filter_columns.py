@@ -43,6 +43,9 @@ class FilterColumns(Process):
         self._close()
 
     def _close(self):
+        from time import sleep
+        sleep(20)
+        
         self.socket.close()
         self.socket2.close()
         self.context.term()

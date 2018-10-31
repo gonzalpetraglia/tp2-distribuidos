@@ -4,7 +4,6 @@ from players_processer.players_processer import PlayersProcesser
 from points_summarier.points_summarier import PointsSummarier
 from reader import Reader
 from sink import Sink
-from time import sleep
 
 if __name__ == '__main__':
     incoming_address, incoming_port = '127.0.0.1', '2000'
@@ -25,7 +24,6 @@ if __name__ == '__main__':
     points_summarier2.start()
     sink.start()
 
-    sleep(1)
     reader.start()
 
 

@@ -33,5 +33,8 @@ class Sink(Process):
         self._close()
 
     def _close(self):
+        from time import sleep
+        sleep(20)
+        
         self.socket.close()
         self.context.term()

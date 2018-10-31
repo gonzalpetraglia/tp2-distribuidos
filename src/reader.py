@@ -25,6 +25,9 @@ class Reader(Process):
     def run(self):
         self._init()
         files_names = [join(INPUT_FILES_DIRECTORY, entry)  for entry in listdir(INPUT_FILES_DIRECTORY) if match(r'^shot log \w{3}\.csv$', entry)]
+        from time import sleep
+
+        sleep(20)
         for file_name in files_names:
             csv_team = match(r'.*shot log (\w{3})\.csv$', file_name).group(1)
             print(csv_team)
@@ -44,6 +47,9 @@ class Reader(Process):
         self._close()
 
     def _close(self):
+        from time import sleep
+        sleep(20)
+        
         self.socket.close()
         self.context.term()
 
