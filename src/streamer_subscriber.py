@@ -14,10 +14,10 @@ class Streamer(Process):
         super(Streamer, self).__init__()
 
     def _get_message(self):
-        return self.frontend.recv_json()
+        return self.frontend.recv_pyobj()
     
     def _forward_message(self, message):
-        self.backend.send_json(message)
+        self.backend.send_pyobj(message)
 
     def run(self):
         try:

@@ -3,12 +3,14 @@ from multiprocessing import Process
 
 class Streamer(Process):
 
-    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, number_of_threads=1):
+    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, number_of_pushers, number_of_pullers, number_of_threads=1):
         self.incoming_port = incoming_port
         self.outgoing_port = outgoing_port
         self.incoming_address = incoming_address
         self.outgoing_address = outgoing_address
         self.number_of_threads = number_of_threads
+        self.number_of_pushers = number_of_pushers
+        self.number_of_pullers = number_of_pullers
         super(Streamer, self).__init__()
 
     def _get_message(self):
@@ -28,14 +30,19 @@ class Streamer(Process):
             # Socket facing services
             self.backend = self.context.socket(zmq.PUSH)
             self.backend.bind("tcp://{}:{}".format(self.outgoing_address, self.outgoing_port))
-        
-            message = self._get_message()
-            while message != 'END':
-                self._forward_message(message)
+    
+            accumulated_end_tokens = 0
+            while accumulated_end_tokens < self.number_of_pushers:
                 message = self._get_message()
-                
-
-            self._forward_message('END')
+                if message == 'END':
+                    accumulated_end_tokens += 1
+                    print("Received {} ENDS. Total {}".format(accumulated_end_tokens, self.number_of_pushers))
+                    continue
+                self._forward_message(message)
+            
+            print('Finishing streamer')
+            for i in range(self.number_of_pullers):
+                self._forward_message('END')
             
         except Exception as e:
             print (e)

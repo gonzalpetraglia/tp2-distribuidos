@@ -35,7 +35,7 @@ class Reader(Process):
                 shot_logs_reader = csv.DictReader(f)
                 for line in shot_logs_reader: 
                     line['shoot team'] = csv_team
-                    self._send_row(line) #send
+                    self._send_row(line) 
 
 
         self._send_row('END')

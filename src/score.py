@@ -19,7 +19,7 @@ class AcummulatedScore(object):
         return self.__str__()
 
     def home_wins(self):
-        return self.home_points > self.away_points
+        return self.home_points >= self.away_points
 
     @classmethod
     def from_string(cls, string):
