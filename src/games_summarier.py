@@ -12,19 +12,19 @@ class GamesSummarier(Process):
 
     def _init(self):
         self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.PULL)
+        self.frontend = self.context.socket(zmq.PULL)
         # We can connect to several endpoints if we desire, and receive from all.
-        self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
         
-        self.socket2 = self.context.socket(zmq.PUSH)
+        self.backend = self.context.socket(zmq.PUSH)
         # We can connect to several endpoints if we desire, and receive from all.
-        self.socket2.connect('tcp://{}:{}'.format(self.outcoming_address, self.outcoming_port))
+        self.backend.connect('tcp://{}:{}'.format(self.outcoming_address, self.outcoming_port))
 
     def _get_game(self):
-        return self.socket.recv_string()
+        return self.frontend.recv_string()
 
     def _send_result(self, result):
-        self.socket2.send_string(result)
+        self.backend.send_string(result)
 
     def run(self):
         self._init()
@@ -51,6 +51,6 @@ class GamesSummarier(Process):
         from time import sleep
         sleep(20)
         
-        self.socket.close()
-        self.socket2.close()
+        self.frontend.close()
+        self.backend.close()
         self.context.term()

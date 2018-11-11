@@ -17,25 +17,25 @@ class SumUpGames(Process):
 
     def _init(self):
         self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.PULL)
-        self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        self.frontend = self.context.socket(zmq.PULL)
+        self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
         
-        self.socket2 = self.context.socket(zmq.PUSH)
-        self.socket2.bind('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
+        self.backend = self.context.socket(zmq.PUSH)
+        self.backend.bind('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
         
-        self.socket3 = self.context.socket(zmq.PUSH)
-        self.socket3.connect('tcp://{}:{}'.format(self.sink_address, self.sink_port))
+        self.sinkSocket  = self.context.socket(zmq.PUSH)
+        self.sinkSocket.connect('tcp://{}:{}'.format(self.sink_address, self.sink_port))
         
 
     def _get_row(self):
-        x = self.socket.recv_pyobj()
+        x = self.frontend.recv_pyobj()
         return x
 
     def _send_result(self, result):
-        self.socket2.send_string(result)
+        self.backend.send_string(result)
 
     def _send_match(self, result):
-        self.socket3.send_string(result)
+        self.sinkSocket.send_string(result)
 
     def run(self):
         self._init()
@@ -70,9 +70,9 @@ class SumUpGames(Process):
         from time import sleep
         sleep(20)
         
-        self.socket.close()
-        self.socket2.close()
-        self.socket3.close()
+        self.frontend.close()
+        self.backend.close()
+        self.sinkSocket.close()
         self.context.term()
 
 

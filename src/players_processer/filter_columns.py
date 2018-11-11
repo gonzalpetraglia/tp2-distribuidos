@@ -13,20 +13,20 @@ class FilterColumns(Process):
 
     def _init(self):
         self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.PULL)
-        self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        self.frontend = self.context.socket(zmq.PULL)
+        self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
         
-        self.socket2 = self.context.socket(zmq.PUSH)
-        self.socket2.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
+        self.backend = self.context.socket(zmq.PUSH)
+        self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
         
 
     def _get_row(self):
-        x = self.socket.recv_pyobj()
+        x = self.frontend.recv_pyobj()
 
         return x
 
     def _send_filtered_columns(self, columns):
-        self.socket2.send_pyobj(columns)
+        self.backend.send_pyobj(columns)
 
     def run(self):
         self._init()
@@ -46,6 +46,6 @@ class FilterColumns(Process):
         from time import sleep
         sleep(20)
         
-        self.socket.close()
-        self.socket2.close()
+        self.frontend.close()
+        self.backend.close()
         self.context.term()

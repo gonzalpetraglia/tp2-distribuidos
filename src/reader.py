@@ -10,7 +10,7 @@ INPUT_FILES_DIRECTORY = environ.get('INPUT_FILES_DIRECTORY', join(dirname(__file
 
 class Reader(Process):
     def _send_row(self, row):
-        self.socket.send_pyobj(row)
+        self.frontend.send_pyobj(row)
 
     def __init__(self, incoming_address, incoming_port):
         self.incoming_address = incoming_address
@@ -19,8 +19,8 @@ class Reader(Process):
 
     def _init(self):
         self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.PUB)
-        self.socket.bind('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        self.frontend = self.context.socket(zmq.PUB)
+        self.frontend.bind('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
         
     def run(self):
         self._init()
@@ -50,6 +50,6 @@ class Reader(Process):
         from time import sleep
         sleep(20)
         
-        self.socket.close()
+        self.frontend.close()
         self.context.term()
 
