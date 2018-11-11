@@ -8,7 +8,6 @@ from streamer import Streamer
 from streamer_subscriber import StreamerSubscriber
 from sink import Sink
 
-END_TOKEN = 'END'
 NUMBER_OF_FILTERS_COLUMNS = 10
 NUMBER_OF_FILTERS_BY_SCORE = 10
 class PointsSummarier(Process):

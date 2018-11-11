@@ -10,7 +10,6 @@ from streamer_subscriber import StreamerSubscriber
 from sink import Sink
 
 
-END_TOKEN = 'END'
 NUMBER_OF_FILTER_SCORED = 10
 NUMBER_OF_SUM_UP_PLAYERS = 1
 NUMBER_OF_FILTERS_COLUMNS = 10

@@ -28,7 +28,7 @@ class SumUpGames(Process):
         
 
     def _get_row(self):
-        key, msg = self.frontend.recv_string()
+        msg = self.frontend.recv_json()
 
         return msg
 
@@ -69,7 +69,7 @@ class SumUpGames(Process):
 
     def _close(self):
         from time import sleep
-        sleep(20)
+        sleep(60)
         
         self.frontend.close()
         self.backend.close()

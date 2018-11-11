@@ -47,7 +47,7 @@ class FilterColumns(Process):
 
     def _close(self):
         from time import sleep
-        sleep(20)
+        sleep(60)
         
         self.frontend.close()
         self.backend.close()

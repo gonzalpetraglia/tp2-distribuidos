@@ -53,7 +53,7 @@ class StreamerSubscriber(Process):
             print ("bringing down zmq device")
         finally:
             from time import sleep
-            sleep(20)
+            sleep(60)
             self.frontend.close()
             self.backend.close()
             self.context.term()

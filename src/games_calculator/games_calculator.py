@@ -8,9 +8,6 @@ from streamer import Streamer
 from streamer_subscriber import StreamerSubscriber
 from sink import Sink
 
-END_TOKEN = 'END'
-
-
 NUMBER_OF_FILTER_SCORED = 10
 NUMBER_OF_GAME_SUMMERS = 1
 NUMBER_OF_FILTERS_COLUMNS = 10
