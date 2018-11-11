@@ -16,32 +16,33 @@ NUMBER_OF_SUM_UP_PLAYERS = 1
 NUMBER_OF_FILTERS_COLUMNS = 10
 class PlayersProcesser(Process):
 
-    def __init__(self, incoming_address, incoming_port):
+    def __init__(self, incoming_address, incoming_port, range_port_init):
         self.incoming_address = incoming_address
         self.incoming_port = incoming_port
+        self.range_port_init = range_port_init
         super(PlayersProcesser, self).__init__()
 
 
     def run(self):
-        streamer_input = StreamerSubscriber(self.incoming_address, self.incoming_port, '127.0.0.1', 2020, 1, NUMBER_OF_FILTERS_COLUMNS)
-
+        streamer_input = StreamerSubscriber(self.incoming_address, self.incoming_port, '127.0.0.1', self.range_port_init, 1, NUMBER_OF_FILTERS_COLUMNS)
 
         filters_columns = []        
         for i in range(NUMBER_OF_FILTERS_COLUMNS):
-            filters_columns.append(FilterColumns('127.0.0.1', 2020, '127.0.0.1', 2021))
-        streamer_filtered_columns = Streamer('127.0.0.1', 2021, '127.0.0.1', 2022, NUMBER_OF_FILTERS_COLUMNS, NUMBER_OF_FILTER_SCORED)
+            filters_columns.append(FilterColumns('127.0.0.1', self.range_port_init, '127.0.0.1', self.range_port_init + 1))
+        streamer_filtered_columns = Streamer('127.0.0.1', self.range_port_init + 1, '127.0.0.1', self.range_port_init + 2, NUMBER_OF_FILTERS_COLUMNS, NUMBER_OF_FILTER_SCORED)
         
         filters_scored = []
         for i in range(NUMBER_OF_FILTER_SCORED):
-            filters_scored.append(FilterScored('127.0.0.1', 2022, '127.0.0.1', 2023))
-        streamer_scored_goals = Streamer('127.0.0.1', 2023, '127.0.0.1', 2024, NUMBER_OF_FILTER_SCORED, NUMBER_OF_SUM_UP_PLAYERS)
+            filters_scored.append(FilterScored('127.0.0.1', self.range_port_init + 2, '127.0.0.1', self.range_port_init + 3))
+        streamer_scored_goals = Streamer('127.0.0.1', self.range_port_init + 3, '127.0.0.1', self.range_port_init + 4, NUMBER_OF_FILTER_SCORED, NUMBER_OF_SUM_UP_PLAYERS)
         
+        # Add subscriber here
         players_summers = []
         for i in range(NUMBER_OF_SUM_UP_PLAYERS):
-            players_summers.append(SumUpPlayers('127.0.0.1', 2024, '127.0.0.1', 2025))
-        ranking_maker = RankingMaker('127.0.0.1', 2025, '127.0.0.1', 2026)
+            players_summers.append(SumUpPlayers('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5))
+        ranking_maker = RankingMaker('127.0.0.1', self.range_port_init + 5, '127.0.0.1', self.range_port_init + 6)
         
-        sink = Sink('127.0.0.1', 2026, 'ranking-players.txt')
+        sink = Sink('127.0.0.1', self.range_port_init + 6, 'ranking-players.txt')
         
         streamer_input.start()
         for filter_columns in filters_columns:

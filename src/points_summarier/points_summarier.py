@@ -13,31 +13,29 @@ NUMBER_OF_FILTERS_COLUMNS = 10
 NUMBER_OF_FILTERS_BY_SCORE = 10
 class PointsSummarier(Process):
 
-    def __init__(self, filter_points, incoming_address, incoming_port):
+    def __init__(self, filter_points, incoming_address, incoming_port, range_port_init):
         self.incoming_address = incoming_address
         self.incoming_port = int(incoming_port)
         self.filter_points = filter_points
+        self.range_port_init = range_port_init
         super(PointsSummarier, self).__init__()
 
 
     def run(self):
-        streamer_input = StreamerSubscriber(self.incoming_address, self.incoming_port, '127.0.0.1', self.incoming_port + self.filter_points * 50, 1, NUMBER_OF_FILTERS_COLUMNS)
+        streamer_input = StreamerSubscriber(self.incoming_address, self.incoming_port, '127.0.0.1', self.range_port_init, 1, NUMBER_OF_FILTERS_COLUMNS)
 
 
         filters_columns = []        
         for i in range(NUMBER_OF_FILTERS_COLUMNS):
-            filters_columns.append(FilterColumns('127.0.0.1', #TODO Improve this
-                                       self.incoming_port + self.filter_points * 50,
-                                       '127.0.0.1',
-                                       self.incoming_port + self.filter_points * 50 + 1 ))
+            filters_columns.append(FilterColumns('127.0.0.1', self.range_port_init, '127.0.0.1', self.range_port_init + 1 ))
 
-        streamer_filtered_columns = Streamer('127.0.0.1',  self.incoming_port + self.filter_points * 50 + 1, '127.0.0.1', self.incoming_port + self.filter_points * 50 + 2, NUMBER_OF_FILTERS_COLUMNS, NUMBER_OF_FILTERS_BY_SCORE )
+        streamer_filtered_columns = Streamer('127.0.0.1',  self.range_port_init+ 1, '127.0.0.1', self.range_port_init + 2, NUMBER_OF_FILTERS_COLUMNS, NUMBER_OF_FILTERS_BY_SCORE )
         filters_by_score = []
         for i in range(NUMBER_OF_FILTERS_BY_SCORE):
-            filters_by_score.append(FilterByScore(self.filter_points, '127.0.0.1',  self.incoming_port + self.filter_points * 50 + 2, '127.0.0.1', self.incoming_port + self.filter_points * 50 + 3))
-        streamer_scored_goals = Streamer('127.0.0.1',  self.incoming_port + self.filter_points * 50 + 3, '127.0.0.1', self.incoming_port + self.filter_points * 50 + 4, NUMBER_OF_FILTERS_BY_SCORE, 1)
-        sum_up_points = SumUpPoints('127.0.0.1', self.incoming_port + self.filter_points * 50 + 4, '127.0.0.1', self.incoming_port + self.filter_points * 50 + 5)
-        sink = Sink('127.0.0.1', self.incoming_port + self.filter_points * 50 + 5, '%-{}pts.txt'.format(self.filter_points))
+            filters_by_score.append(FilterByScore(self.filter_points, '127.0.0.1',  self.range_port_init + 2, '127.0.0.1', self.range_port_init + 3))
+        streamer_scored_goals = Streamer('127.0.0.1',  self.range_port_init + 3, '127.0.0.1', self.range_port_init + 4, NUMBER_OF_FILTERS_BY_SCORE, 1)
+        sum_up_points = SumUpPoints('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5)
+        sink = Sink('127.0.0.1', self.range_port_init + 5, '%-{}pts.txt'.format(self.filter_points))
 
         streamer_input.start()
         for filter_columns in filters_columns:

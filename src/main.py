@@ -6,13 +6,13 @@ from reader import Reader
 from sink import Sink
 
 if __name__ == '__main__':
-    incoming_address, incoming_port = '127.0.0.1', '2000'
-    games_calculator = GamesCalculator(incoming_address, incoming_port, '127.0.0.1', '2001')
-    games_summarier = GamesSummarier('127.0.0.1', '2001', '127.0.0.1', 2002)
+    incoming_address, incoming_port = '127.0.0.1', 2000
+    games_calculator = GamesCalculator(incoming_address, incoming_port, '127.0.0.1', 2001, 2400)
+    games_summarier = GamesSummarier('127.0.0.1', 2001, '127.0.0.1', 2002)
     sink = Sink('127.0.0.1', 2002, '%home-wins.txt')
-    players_processer = PlayersProcesser(incoming_address, incoming_port)
-    points_summarier2 = PointsSummarier(2, incoming_address, incoming_port)
-    points_summarier3 = PointsSummarier(3, incoming_address, incoming_port)
+    players_processer = PlayersProcesser(incoming_address, incoming_port, 2100)
+    points_summarier2 = PointsSummarier(2, incoming_address, incoming_port, 2200)
+    points_summarier3 = PointsSummarier(3, incoming_address, incoming_port, 2300)
     reader = Reader(incoming_address, incoming_port)
 
 
