@@ -36,7 +36,6 @@ class Streamer(Process):
                 message = self._get_message()
                 if message == 'END':
                     accumulated_end_tokens += 1
-                    print("Received {} ENDS. Total {}".format(accumulated_end_tokens, self.number_of_pushers))
                     continue
                 self._forward_message(message)
             

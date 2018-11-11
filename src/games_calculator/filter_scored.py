@@ -40,6 +40,8 @@ class FilterScored(Process):
 
         self._close()
 
+        print('Finished filter columns')
+
     def _close(self):
         from time import sleep
         sleep(20)

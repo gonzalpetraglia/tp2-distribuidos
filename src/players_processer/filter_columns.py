@@ -13,9 +13,8 @@ class FilterColumns(Process):
 
     def _init(self):
         self.context = zmq.Context()
-        self.socket = self.context.socket(zmq.SUB)
+        self.socket = self.context.socket(zmq.PULL)
         self.socket.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
-        self.socket.setsockopt_string(zmq.SUBSCRIBE, '')
         
         self.socket2 = self.context.socket(zmq.PUSH)
         self.socket2.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))

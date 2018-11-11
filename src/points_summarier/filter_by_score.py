@@ -38,9 +38,8 @@ class FilterByScore(Process):
             row = self._get_row()
             
             
-
         self._send_shot('END')
-
+        print('Finished filter by score')
         self._close()
 
     def _close(self):
