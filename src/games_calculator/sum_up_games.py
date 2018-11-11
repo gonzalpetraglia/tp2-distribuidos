@@ -28,8 +28,9 @@ class SumUpGames(Process):
         
 
     def _get_row(self):
-        x = self.frontend.recv_pyobj()
-        return x
+        key, msg = self.frontend.recv_string()
+
+        return msg
 
     def _send_result(self, result):
         self.backend.send_string(result)
@@ -43,7 +44,7 @@ class SumUpGames(Process):
         row = self._get_row()
 
         games = Counter()
-        while row != 'END':
+        while row != END_TOKEN:
             date = row[0]
             home_team = row[1]
             away_team = row[2]
@@ -62,8 +63,8 @@ class SumUpGames(Process):
             self._send_result(str(games.get(game)))
             self._send_match("{}, {}".format(game, games.get(game)))
             
-        self._send_result('END')
-        self._send_match('END')
+        self._send_result(END_TOKEN)
+        self._send_match(END_TOKEN)
         self._close()
 
     def _close(self):

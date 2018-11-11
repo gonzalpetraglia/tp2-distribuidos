@@ -1,19 +1,20 @@
 from games_calculator.games_calculator import GamesCalculator
-from games_summarier import GamesSummarier
+from games_summarier.games_summarier_pipeline import GamesSummarierPipeline
 from players_processer.players_processer import PlayersProcesser
 from points_summarier.points_summarier import PointsSummarier
-from reader import Reader
+from input_pipeline.input_pipeline import Input
 from sink import Sink
 
 if __name__ == '__main__':
-    incoming_address, incoming_port = '127.0.0.1', 2000
-    games_calculator = GamesCalculator(incoming_address, incoming_port, '127.0.0.1', 2001, 2400)
-    games_summarier = GamesSummarier('127.0.0.1', 2001, '127.0.0.1', 2002)
-    sink = Sink('127.0.0.1', 2002, '%home-wins.txt')
-    players_processer = PlayersProcesser(incoming_address, incoming_port, 2100)
-    points_summarier2 = PointsSummarier(2, incoming_address, incoming_port, 2200)
-    points_summarier3 = PointsSummarier(3, incoming_address, incoming_port, 2300)
-    reader = Reader(incoming_address, incoming_port)
+
+    input_address, input_port = '127.0.0.1', 2000
+    games_summarier_address, games_summarier_port = '127.0.0.1', 2001
+    input_pipe = Input(input_address, input_port, 2500)
+    games_calculator = GamesCalculator(input_address, input_port, games_summarier_address, games_summarier_port, 2400)
+    games_summarier = GamesSummarierPipeline(games_summarier_address, games_summarier_port, 2600)
+    players_processer = PlayersProcesser(input_address, input_port, 2100)
+    points_summarier2 = PointsSummarier(2, input_address, input_port, 2200)
+    points_summarier3 = PointsSummarier(3, input_address, input_port, 2300)
 
 
     print ('Started')
@@ -22,18 +23,15 @@ if __name__ == '__main__':
     players_processer.start()
     points_summarier3.start()
     points_summarier2.start()
-    sink.start()
-
-    reader.start()
+    input_pipe.start()
 
 
-    reader.join()
     games_calculator.join()
     games_summarier.join()
     players_processer.join()
     points_summarier3.join()
     points_summarier2.join()
-    sink.join()
+    input_pipe.join()
 
 
 

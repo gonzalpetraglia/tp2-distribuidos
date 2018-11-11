@@ -23,7 +23,7 @@ class SumUpPoints(Process):
 
     def _get_row(self):
 
-        x = self.frontend.recv_pyobj()
+        x = self.frontend.recv_json()
 
         return x
 
@@ -38,7 +38,7 @@ class SumUpPoints(Process):
         scored_shots = 0
         total_shots = 0
 
-        while row != 'END':
+        while row != END_TOKEN:
             total_shots += 1 
             if row[0] == 'SCORED':
                 scored_shots += 1
@@ -48,7 +48,7 @@ class SumUpPoints(Process):
         else:
             result = 'undefined'
         self._send_result(result)
-        self._send_result('END')
+        self._send_result(END_TOKEN)
         print('Finished sum up points')
 
 

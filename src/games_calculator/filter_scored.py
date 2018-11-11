@@ -20,23 +20,23 @@ class FilterScored(Process):
         self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
 
     def _get_row(self):
-        x = self.frontend.recv_pyobj()
+        x = self.frontend.recv_json()
         return x
 
     def _send_scored(self, columns):
-        self.backend.send_pyobj(columns)
+        self.backend.send_json(columns)
 
     def run(self):
         self._init()
         row = self._get_row()
-        while row != 'END':
+        while row != END_TOKEN:
 
             if (row[0] == 'SCORED'):
                 self._send_scored(row[1:])
             row = self._get_row()
             
 
-        self._send_scored('END')
+        self._send_scored(END_TOKEN)
 
         self._close()
 

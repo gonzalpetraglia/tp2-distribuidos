@@ -2,6 +2,8 @@
 from multiprocessing import Process
 from score import AcummulatedScore
 import zmq
+
+END_TOKEN = 'END'
 class Sink(Process):
     def __init__(self, incoming_address, incoming_port, name_file):
         self.incoming_address = incoming_address
@@ -25,7 +27,7 @@ class Sink(Process):
         result = self._get_result()
 
         with open(self.name_file, 'w') as output_file:
-            while result != 'END':
+            while result != END_TOKEN:
                 output_file.write(result)
                 output_file.write('\n')
                 result = self._get_result()

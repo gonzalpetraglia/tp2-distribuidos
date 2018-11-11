@@ -23,12 +23,12 @@ class SumUpPlayers(Process):
 
     def _get_row(self):
 
-        x = self.frontend.recv_pyobj()
+        x = self.frontend.recv_json()
 
         return x
 
     def _send_player(self, result):
-        self.backend.send_pyobj(result)
+        self.backend.send_json(result)
 
     def run(self):
         self._init()
@@ -37,7 +37,7 @@ class SumUpPlayers(Process):
 
 
         players_points = Counter()
-        while row != 'END':
+        while row != END_TOKEN:
 
             player = row[1]
             points = int(row[0])
@@ -47,7 +47,7 @@ class SumUpPlayers(Process):
         for player in players_points:
             self._send_player([player, players_points.get(player)])
 
-        self._send_player('END')
+        self._send_player(END_TOKEN)
         self._close()
 
     def _close(self):

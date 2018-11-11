@@ -5,6 +5,7 @@ from ranking import Ranking, RankingCandidate
 from collections import Counter
 
 RANKING_LENGTH = os.environ.get('RANKING_LENGTH', 10)
+END_TOKEN = 'END'
 class RankingMaker(Process):
     def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port):
         self.incoming_address = incoming_address
@@ -23,7 +24,7 @@ class RankingMaker(Process):
       
 
     def _get_row(self):
-        x = self.frontend.recv_pyobj()
+        x = self.frontend.recv_json()
         return x
 
     def _send_result(self, message):
@@ -34,7 +35,7 @@ class RankingMaker(Process):
         ranking = Ranking(10)
  
         row = self._get_row()
-        while row != 'END':
+        while row != END_TOKEN:
             ranking.consider(RankingCandidate(row[0], row[1]))
             row = self._get_row()
 
@@ -43,7 +44,7 @@ class RankingMaker(Process):
         #     self._send_result(result)
 
         self._send_result(str(ranking))
-        self._send_result('END')
+        self._send_result(END_TOKEN)
         self._close()
 
 

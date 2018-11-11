@@ -21,24 +21,24 @@ class FilterByScore(Process):
         self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
 
     def _get_row(self):
-        x = self.frontend.recv_pyobj()
+        x = self.frontend.recv_json()
 
         return x
 
     def _send_shot(self, shot):
-        self.backend.send_pyobj(shot)
+        self.backend.send_json(shot)
 
     def run(self):
         self._init()
         row = self._get_row()
 
-        while row != 'END':
+        while row != END_TOKEN:
             if (int(row[1]) == int(self.points_filter)):
                 self._send_shot(row)
             row = self._get_row()
             
             
-        self._send_shot('END')
+        self._send_shot(END_TOKEN)
         print('Finished filter by score')
         self._close()
 

@@ -21,25 +21,25 @@ class FilterColumns(Process):
         
 
     def _get_row(self):
-        x = self.frontend.recv_pyobj()
+        x = self.frontend.recv_json()
 
         return x
 
     def _send_filtered_columns(self, columns):
-        self.backend.send_pyobj(columns)
+        self.backend.send_json(columns)
 
     def run(self):
         self._init()
         row = self._get_row()
 
-        while row != 'END':
+        while row != END_TOKEN:
             self._send_filtered_columns([row['current shot outcome'],
                     row['points'],
                     row['shoot player']])
 
             row = self._get_row()
 
-        self._send_filtered_columns('END')
+        self._send_filtered_columns(END_TOKEN)
         self._close()
 
     def _close(self):
