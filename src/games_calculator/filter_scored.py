@@ -44,7 +44,7 @@ class FilterScored(Process):
 
     def _close(self):
         from time import sleep
-        sleep(60)
+        sleep(20)
         
         self.frontend.close()
         self.backend.close()

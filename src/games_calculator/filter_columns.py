@@ -40,6 +40,7 @@ class FilterColumns(Process):
                     row['shoot team']])
 
             row = self._get_row()
+            print(row)
 
         self._send_filtered_columns(END_TOKEN)
         self._close()
@@ -47,7 +48,7 @@ class FilterColumns(Process):
 
     def _close(self):
         from time import sleep
-        sleep(60)
+        sleep(20)
         
         self.frontend.close()
         self.backend.close()

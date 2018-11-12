@@ -42,7 +42,6 @@ class StreamerPublisher(Process):
                     accumulated_end_tokens += 1
                     continue
                 self._forward_message(message)
-                print(message)
             
             self._forward_message(END_TOKEN)
             

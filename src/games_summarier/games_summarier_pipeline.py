@@ -18,3 +18,9 @@ class GamesSummarierPipeline(Process):
             
         games_summarier = GamesSummarier(self.incoming_address, self.incoming_port, '127.0.0.1', self.range_port_init)
         sink = Sink('127.0.0.1', self.range_port_init, '%home-wins.txt')
+        
+        games_summarier.start()
+        sink.start()
+        
+        games_summarier.join()
+        sink.join()

@@ -41,6 +41,7 @@ class Streamer(Process):
                     accumulated_end_tokens += 1
                     continue
                 self._forward_message(message)
+                print(message)
             
             print('Finishing streamer')
             for i in range(self.number_of_pullers):
@@ -51,7 +52,7 @@ class Streamer(Process):
             print ("bringing down zmq device")
         finally:
             from time import sleep
-            sleep(60)
+            sleep(20)
 
             self.frontend.close()
             self.backend.close()

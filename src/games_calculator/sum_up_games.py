@@ -58,7 +58,9 @@ class SumUpGames(Process):
                 acummulated_score = AcummulatedScore(0, points)
             games.update({key: acummulated_score})
             row = self._get_row()
+            print(row)
 
+        print('Finished summing games')
         for game in games:
             self._send_result(str(games.get(game)))
             self._send_match("{}, {}".format(game, games.get(game)))
@@ -69,7 +71,7 @@ class SumUpGames(Process):
 
     def _close(self):
         from time import sleep
-        sleep(60)
+        sleep(20)
         
         self.frontend.close()
         self.backend.close()

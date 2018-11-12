@@ -51,7 +51,7 @@ class StreamerPublisher(Process):
             print ("bringing down zmq device")
         finally:
             from time import sleep
-            sleep(60)
+            sleep(20)
 
             self.frontend.close()
             self.backend.close()
