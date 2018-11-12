@@ -13,23 +13,32 @@ class Input(Process):
         self.outgoing_address = outgoing_address
         self.outgoing_port = outgoing_port
         self.range_port_init = range_port_init
+        self.number_filter_columns = 10
+        self.number_readers = 10
         super(Input, self).__init__()
 
 
     def run(self):
-
-        reader = Reader('127.0.0.1', self.range_port_init)
-        streamer = Streamer('127.0.0.1', self.range_port_init, '127.0.0.1', self.range_port_init + 1, 1, 1)
-        filter_columns = FilterColumns('127.0.0.1', self.range_port_init + 1, '127.0.0.1', self.range_port_init + 2)
+        readers = []
+        for i in range(self.number_readers):
+            readers.append(Reader('127.0.0.1', self.range_port_init, i, self.number_readers))
+        streamer = Streamer('127.0.0.1', self.range_port_init, '127.0.0.1', self.range_port_init + 1, self.number_readers, self.number_filter_columns)
+        filters_columns = []
+        for i in range(self.number_filter_columns):
+            filters_columns.append(FilterColumns('127.0.0.1', self.range_port_init + 1, '127.0.0.1', self.range_port_init + 2))
         input_ventilator = StreamerPublisher('127.0.0.1', self.range_port_init + 2, self.outgoing_address, self.outgoing_port, 1)
 
-
-        reader.start()
+        for reader in readers:
+            reader.start()
         streamer.start()
-        filter_columns.start()
+        for filter_columns in filters_columns:
+            filter_columns.start()
+        
         input_ventilator.start()
 
-        reader.join()
+        for reader in readers:
+            reader.join()
         streamer.join()
-        filter_columns.join()
+        for filter_columns in filters_columns:
+            filter_columns.join()
         input_ventilator.join()

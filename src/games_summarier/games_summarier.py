@@ -47,7 +47,8 @@ class GamesSummarier(Process):
             score_string = self._get_game()
             print(score_string)
 
-        self._send_result("{}%".format(float(home_wins) / total_games * 100 ))
+        result = "{}%".format(float(home_wins) / total_games * 100) if total_games else 'undefined'
+        self._send_result(result)
         self._send_result(END_TOKEN)
         self._close()
 
