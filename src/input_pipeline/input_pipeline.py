@@ -2,7 +2,7 @@ from multiprocessing import Process
 from collections import Counter
 import zmq
 from .reader import Reader
-from .streamer_publisher import StreamerPublisher
+from streamer_publisher import StreamerPublisher
 from .filter_columns import FilterColumns
 from streamer import Streamer
 

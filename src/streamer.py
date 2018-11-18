@@ -41,7 +41,6 @@ class Streamer(Process):
                     accumulated_end_tokens += 1
                     continue
                 self._forward_message(message)
-                print(message)
             
             print('Finishing streamer')
             for i in range(self.number_of_pullers):
@@ -49,7 +48,7 @@ class Streamer(Process):
             
         except Exception as e:
             print (e)
-            print ("bringing down zmq device")
+            print ("bringing down zmq device streamer")
         finally:
             from time import sleep
             sleep(20)

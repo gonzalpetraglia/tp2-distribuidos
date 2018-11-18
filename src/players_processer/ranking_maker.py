@@ -28,7 +28,7 @@ class RankingMaker(Process):
         return x
 
     def _send_result(self, message):
-        self.backend.send_string(message)
+        self.backend.send_json(message)
 
     def run(self):
         self._init()

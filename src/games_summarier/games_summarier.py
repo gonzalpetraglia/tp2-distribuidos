@@ -24,10 +24,10 @@ class GamesSummarier(Process):
         self.backend.connect('tcp://{}:{}'.format(self.outcoming_address, self.outcoming_port))
 
     def _get_game(self):
-        return self.frontend.recv_string()
+        return self.frontend.recv_json()
 
     def _send_result(self, result):
-        self.backend.send_string(result)
+        self.backend.send_json(result)
 
     def run(self):
         self._init()

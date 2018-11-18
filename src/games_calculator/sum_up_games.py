@@ -1,42 +1,48 @@
 from multiprocessing import Process
 from collections import Counter
+import json
 import zmq
 
 from score import AcummulatedScore
 END_TOKEN = 'END'
 class SumUpGames(Process):
 
-    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, sink_address, sink_port):
+    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, sink_address, sink_port, number_of_aggregator):
         self.incoming_address = incoming_address
         self.incoming_port = incoming_port
         self.outgoing_address = outgoing_address
         self.outgoing_port = outgoing_port     
         self.sink_address = sink_address
         self.sink_port = sink_port   
+        self.number_of_aggregator = number_of_aggregator
         super(SumUpGames, self).__init__()
 
     def _init(self):
         self.context = zmq.Context()
-        self.frontend = self.context.socket(zmq.PULL)
+        self.frontend = self.context.socket(zmq.SUB)
         self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        print('sub {}'.format(self.number_of_aggregator))
+        self.frontend.setsockopt_string(zmq.SUBSCRIBE, str(self.number_of_aggregator))
+        print('sub2 {}'.format(self.number_of_aggregator))
         
         self.backend = self.context.socket(zmq.PUSH)
-        self.backend.bind('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
+        self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
         
         self.sinkSocket  = self.context.socket(zmq.PUSH)
         self.sinkSocket.connect('tcp://{}:{}'.format(self.sink_address, self.sink_port))
-        
 
     def _get_row(self):
-        msg = self.frontend.recv_json()
-
+        _, msg = self.frontend.recv_multipart()
+        msg = msg.decode()
+        if msg != END_TOKEN:
+            msg = json.loads(msg)
         return msg
 
     def _send_result(self, result):
-        self.backend.send_string(result)
+        self.backend.send_json(result)
 
     def _send_match(self, result):
-        self.sinkSocket.send_string(result)
+        self.sinkSocket.send_json(result)
 
     def run(self):
         self._init()
@@ -70,6 +76,8 @@ class SumUpGames(Process):
         self._close()
 
     def _close(self):
+        self.frontend.setsockopt_string(zmq.UNSUBSCRIBE, str(self.number_of_aggregator))
+
         from time import sleep
         sleep(20)
         

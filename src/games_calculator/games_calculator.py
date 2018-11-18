@@ -6,10 +6,11 @@ from .filter_scored import FilterScored
 from .sum_up_games import SumUpGames
 from streamer import Streamer
 from streamer_subscriber import StreamerSubscriber
+from streamer_publisher import StreamerPublisher
 from sink import Sink
 
 NUMBER_OF_FILTER_SCORED = 10
-NUMBER_OF_GAME_SUMMERS = 1
+NUMBER_OF_GAME_SUMMERS = 10
 NUMBER_OF_FILTERS_COLUMNS = 10
 class GamesCalculator(Process):
 
@@ -35,12 +36,13 @@ class GamesCalculator(Process):
         for i in range(NUMBER_OF_FILTER_SCORED):
             filters_scored.append(FilterScored('127.0.0.1', self.range_port_init + 2, '127.0.0.1', self.range_port_init + 3 ))
         
-        streamer_scored_goals = Streamer('127.0.0.1', self.range_port_init + 3 , '127.0.0.1', self.range_port_init + 4, NUMBER_OF_FILTER_SCORED, NUMBER_OF_GAME_SUMMERS)
+        streamer_scored_goals = StreamerPublisher('127.0.0.1', self.range_port_init + 3 , '127.0.0.1', self.range_port_init + 4, NUMBER_OF_FILTER_SCORED, NUMBER_OF_GAME_SUMMERS,
+                                lambda x: '{}_{}_{}'.format(x[0], x[1], x[2]))
         
         # Add subscriber here
         games_summers = []
         for i in range(NUMBER_OF_GAME_SUMMERS):
-            games_summers.append(SumUpGames('127.0.0.1', self.range_port_init + 4 , self.outgoing_address, self.outgoing_port, '127.0.0.1', self.range_port_init + 5))
+            games_summers.append(SumUpGames('127.0.0.1', self.range_port_init + 4 , self.outgoing_address, self.outgoing_port, '127.0.0.1', self.range_port_init + 5, i))
         
         sink = Sink('127.0.0.1', self.range_port_init + 5 , 'games.txt')
 

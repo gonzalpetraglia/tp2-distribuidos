@@ -28,7 +28,7 @@ class SumUpPoints(Process):
         return x
 
     def _send_result(self, result):
-        self.backend.send_string(result)
+        self.backend.send_json(result)
 
     def run(self):
         self._init()

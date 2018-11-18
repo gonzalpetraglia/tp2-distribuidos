@@ -24,6 +24,7 @@ class FilterScored(Process):
         return x
 
     def _send_scored(self, columns):
+        print(columns)
         self.backend.send_json(columns)
 
     def run(self):

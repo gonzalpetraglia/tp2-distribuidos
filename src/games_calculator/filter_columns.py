@@ -41,7 +41,6 @@ class FilterColumns(Process):
                     row[5]])#Shoot team
 
             row = self._get_row()
-            print(row)
 
         self._send_filtered_columns(END_TOKEN)
         self._close()

@@ -18,7 +18,7 @@ class Sink(Process):
         self.frontend.bind('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
 
     def _get_result(self):
-        return self.frontend.recv_string()
+        return self.frontend.recv_json()
 
 
     def run(self):
