@@ -30,30 +30,22 @@ class StreamerPublisher(Process):
         self.backend.bind("tcp://{}:{}".format(self.outgoing_address, self.outgoing_port))
 
     def _get_message(self):
-        print('Going to get message')
-        x =  self.frontend.recv_json()
-        return x
-    
+        return self.frontend.recv_json()
+        
     def _forward_message(self, message):
-        print ('Entering publish streamer r')
-
+ 
         if self._get_key is None or self.number_of_subscribers is None:
-            print ('Entering publish streamer s ')
-
             self.backend.send_json(message)
         else:
-            print ('Entering publish streamer t')
             key = self._get_key(message)
             hashed_key = str(int(md5(key.encode()).hexdigest(), 16) % self.number_of_subscribers)
             message_encoded = json.dumps(message).encode()
             self.backend.send_multipart([hashed_key.encode(), message_encoded])
 
     def _forward_end_message(self):
-        print ('Ending s publisher')
         if self._get_key is None or self.number_of_subscribers is None:
             self.backend.send_json(END_TOKEN)
         else:
-            print ('Ending s publisher {}'.format(self.number_of_subscribers))
 
             for i in range(self.number_of_subscribers):
                 self.backend.send_multipart([str(i).encode(), END_TOKEN.encode()])

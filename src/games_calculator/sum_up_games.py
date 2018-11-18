@@ -21,9 +21,7 @@ class SumUpGames(Process):
         self.context = zmq.Context()
         self.frontend = self.context.socket(zmq.SUB)
         self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
-        print('sub {}'.format(self.number_of_aggregator))
         self.frontend.setsockopt_string(zmq.SUBSCRIBE, str(self.number_of_aggregator))
-        print('sub2 {}'.format(self.number_of_aggregator))
         
         self.backend = self.context.socket(zmq.PUSH)
         self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
@@ -64,9 +62,7 @@ class SumUpGames(Process):
                 acummulated_score = AcummulatedScore(0, points)
             games.update({key: acummulated_score})
             row = self._get_row()
-            print(row)
 
-        print('Finished summing games')
         for game in games:
             self._send_result(str(games.get(game)))
             self._send_match("{}, {}".format(game, games.get(game)))

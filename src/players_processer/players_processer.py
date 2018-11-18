@@ -6,12 +6,13 @@ from .filter_scored import FilterScored
 from .sum_up_player import SumUpPlayers
 from .ranking_maker import RankingMaker
 from streamer import Streamer
+from streamer_publisher import StreamerPublisher
 from streamer_subscriber import StreamerSubscriber
 from sink import Sink
 
 
 NUMBER_OF_FILTER_SCORED = 10
-NUMBER_OF_SUM_UP_PLAYERS = 1
+NUMBER_OF_SUM_UP_PLAYERS = 10
 NUMBER_OF_FILTERS_COLUMNS = 10
 class PlayersProcesser(Process):
 
@@ -33,12 +34,12 @@ class PlayersProcesser(Process):
         filters_scored = []
         for i in range(NUMBER_OF_FILTER_SCORED):
             filters_scored.append(FilterScored('127.0.0.1', self.range_port_init + 2, '127.0.0.1', self.range_port_init + 3))
-        streamer_scored_goals = Streamer('127.0.0.1', self.range_port_init + 3, '127.0.0.1', self.range_port_init + 4, NUMBER_OF_FILTER_SCORED, NUMBER_OF_SUM_UP_PLAYERS)
+        streamer_scored_goals = StreamerPublisher('127.0.0.1', self.range_port_init + 3, '127.0.0.1', self.range_port_init + 4, NUMBER_OF_FILTER_SCORED, NUMBER_OF_SUM_UP_PLAYERS, lambda x: x[1])
         
         # Add subscriber here
         players_summers = []
         for i in range(NUMBER_OF_SUM_UP_PLAYERS):
-            players_summers.append(SumUpPlayers('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5))
+            players_summers.append(SumUpPlayers('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5, i))
         ranking_maker = RankingMaker('127.0.0.1', self.range_port_init + 5, '127.0.0.1', self.range_port_init + 6)
         
         sink = Sink('127.0.0.1', self.range_port_init + 6, 'ranking-players.txt')
