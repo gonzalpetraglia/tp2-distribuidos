@@ -32,12 +32,13 @@ class FilterColumns(Process):
         row = self._get_row()
 
         while row != END_TOKEN:
-            self._send_filtered_columns([row['current shot outcome'],
-                    row['date'],
-                    row['home team'],
-                    row['away team'],
-                    row['points'],
-                    row['shoot team']])
+            self._send_filtered_columns([
+                    row[0], #Outcome
+                    row[1], #Date
+                    row[2], #Home team
+                    row[3], #Away team 
+                    row[4], #Points
+                    row[5]])#Shoot team
 
             row = self._get_row()
             print(row)

@@ -33,8 +33,9 @@ class FilterColumns(Process):
         row = self._get_row()
 
         while row != END_TOKEN:
-            self._send_filtered_columns([row['current shot outcome'],
-                    row['points']])
+            self._send_filtered_columns(
+                    [row[0], # Outcome
+                    row[4]]) #
 
             row = self._get_row()
 
