@@ -54,7 +54,6 @@ class StreamerPublisher(Process):
     def run(self):
         try:
             self._init()
-            print ('inited publisher {} {}'.format(self.number_of_subscribers, self._get_key))
             accumulated_end_tokens = 0
             while accumulated_end_tokens < self.number_of_pushers:
                 message = self._get_message()

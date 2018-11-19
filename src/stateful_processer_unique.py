@@ -3,7 +3,7 @@ import zmq
 import json
 
 END_TOKEN = 'END'
-class StatefulProcesserPuller(Process):
+class StatefulProcesserUnique(Process):
 
     def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, init_state, update_state, get_summaries):
         self.incoming_address = incoming_address
@@ -13,7 +13,7 @@ class StatefulProcesserPuller(Process):
         self._init_state = init_state
         self._update_state = update_state
         self._get_summaries = get_summaries
-        super(StatefulProcesserPuller, self).__init__()
+        super(StatefulProcesserUnique, self).__init__()
 
     def _init(self):
         self.context = zmq.Context()

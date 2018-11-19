@@ -1,7 +1,7 @@
-from stateful_processer_puller import StatefulProcesserPuller
+from stateful_processer_unique import StatefulProcesserUnique
 from score import AcummulatedScore
 
-class GamesSummarier(StatefulProcesserPuller):
+class GamesSummarier(StatefulProcesserUnique):
     def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port):
         def init_state():
             return {"home wins": 0, "total games": 0}

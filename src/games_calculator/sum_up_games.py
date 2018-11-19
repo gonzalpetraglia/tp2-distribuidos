@@ -6,7 +6,7 @@ from stateful_processer import StatefulProcesser
 
 
 class SumUpGames(StatefulProcesser):
-    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, number_of_aggregator):
+    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, numerator_address, numerator_port):
         def init_state():
             return Counter()
         
@@ -33,7 +33,9 @@ class SumUpGames(StatefulProcesser):
                                             incoming_port,
                                             outgoing_address,
                                             outgoing_port,
-                                            number_of_aggregator,
+                                            numerator_address,
+                                            numerator_port,
+                                            'sum_up_games',
                                             init_state,
                                             update_state,
                                             get_summaries)

@@ -16,10 +16,12 @@ NUMBER_OF_SUM_UP_PLAYERS = 10
 NUMBER_OF_FILTERS_COLUMNS = 10
 class PlayersProcesser(Process):
 
-    def __init__(self, incoming_address, incoming_port, range_port_init):
+    def __init__(self, incoming_address, incoming_port, range_port_init, numerator_address, numerator_port):
         self.incoming_address = incoming_address
         self.incoming_port = incoming_port
         self.range_port_init = range_port_init
+        self.numerator_address = numerator_address 
+        self.numerator_port = numerator_port
         super(PlayersProcesser, self).__init__()
 
 
@@ -39,7 +41,7 @@ class PlayersProcesser(Process):
         # Add subscriber here
         players_summers = []
         for i in range(NUMBER_OF_SUM_UP_PLAYERS):
-            players_summers.append(SumUpPlayers('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5, i))
+            players_summers.append(SumUpPlayers('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5, self.numerator_address, self.numerator_port))
         
         streamer_players  = Streamer('127.0.0.1', self.range_port_init + 5, '127.0.0.1', self.range_port_init + 6, NUMBER_OF_SUM_UP_PLAYERS, 1)
       

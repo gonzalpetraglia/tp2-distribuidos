@@ -5,12 +5,14 @@ import json
 END_TOKEN = 'END'
 class StatefulProcesser(Process):
 
-    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, number_of_aggregator, init_state, update_state, get_summaries):
+    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, numerator_address, numerator_port, service_name, init_state, update_state, get_summaries):
         self.incoming_address = incoming_address
         self.incoming_port = incoming_port
         self.outgoing_address = outgoing_address
         self.outgoing_port = outgoing_port        
-        self.number_of_aggregator = number_of_aggregator
+        self.numerator_address = numerator_address
+        self.numerator_port = numerator_port
+        self.service_name = service_name
         self._init_state = init_state
         self._update_state = update_state
         self._get_summaries = get_summaries
@@ -18,6 +20,14 @@ class StatefulProcesser(Process):
 
     def _init(self):
         self.context = zmq.Context()
+
+        numerator_socket = self.context.socket(zmq.REQ)
+        numerator_socket.connect("tcp://{}:{}".format(self.numerator_address, self.numerator_port))
+        numerator_socket.send_string(self.service_name)
+
+        self.number_of_aggregator = numerator_socket.recv_string()
+
+
         self.frontend = self.context.socket(zmq.SUB)
         self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
         self.frontend.setsockopt_string(zmq.SUBSCRIBE, str(self.number_of_aggregator))

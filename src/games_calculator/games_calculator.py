@@ -16,12 +16,14 @@ NUMBER_OF_OUTPUT_FORWARDERS = 10
 NUMBER_OF_FILTERS_COLUMNS = 10
 class GamesCalculator(Process):
 
-    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, range_port_init):
+    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, range_port_init, numerator_address, numerator_port):
         self.incoming_address = incoming_address
         self.incoming_port = incoming_port
         self.outgoing_address = outgoing_address
         self.outgoing_port = outgoing_port
         self.range_port_init = range_port_init
+        self.numerator_address = numerator_address 
+        self.numerator_port = numerator_port
         super(GamesCalculator, self).__init__()
 
 
@@ -44,7 +46,7 @@ class GamesCalculator(Process):
         # Add subscriber here
         games_summers = []
         for i in range(NUMBER_OF_GAME_SUMMERS):
-            games_summers.append(SumUpGames('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5, i))
+            games_summers.append(SumUpGames('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5, self.numerator_address, self.numerator_port))
         
         streamer_games = StreamerPublisher('127.0.0.1', self.range_port_init + 5, self.outgoing_address, self.outgoing_port, NUMBER_OF_GAME_SUMMERS)
 
