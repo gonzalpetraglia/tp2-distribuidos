@@ -7,7 +7,7 @@ import csv
 import zmq
 
 END_TOKEN = 'END'
-INPUT_FILES_DIRECTORY = environ.get('INPUT_FILES_DIRECTORY', join(dirname(__file__), '../../../shot-log'))
+INPUT_FILES_DIRECTORY = environ.get('INPUT_FILES_DIRECTORY', join(dirname(__file__), '../../../shot-log-complete'))
 
 class Reader(Process):
     def _send_row(self, row):
