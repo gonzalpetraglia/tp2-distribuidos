@@ -43,7 +43,7 @@ class SumUpPoints(Process):
             if row[0] == 'SCORED':
                 scored_shots += 1
             row = self._get_row()
-        result = '{}%'.format(float(scored_shots) / total_shots * 100) if total_shots else 0
+        result = '{}%'.format(float(scored_shots) / total_shots * 100) if total_shots else 'undefined'
         self._send_result(result)
         self._send_result(END_TOKEN)
         print('Finished sum up points')

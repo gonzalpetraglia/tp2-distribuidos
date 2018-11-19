@@ -1,55 +1,15 @@
-from multiprocessing import Process
-import zmq
-
+from stateless_processer import StatelessProcesser
 END_TOKEN = 'END'
-class FilterColumns(Process):
+class FilterColumns(StatelessProcesser):
 
     def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port):
-        self.incoming_address = incoming_address
-        self.incoming_port = incoming_port
-        self.outgoing_address = outgoing_address
-        self.outgoing_port = outgoing_port        
-        super(FilterColumns, self).__init__()
-
-    def _init(self):
-        self.context = zmq.Context()
-        self.frontend = self.context.socket(zmq.PULL)
-        self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        def filter_columns(x):
+            return [ 
+                    x[0], #Outcome
+                    x[1], #Date
+                    x[2], #)Home team
+                    x[3], #Away team 
+                    x[4], #Points
+                    x[5]] #Shoot team
         
-        self.backend = self.context.socket(zmq.PUSH)
-        self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
-        
-
-    def _get_row(self):
-        x = self.frontend.recv_json()
-        return x
-
-    def _send_filtered_columns(self, columns):
-        self.backend.send_json(columns)
-
-    def run(self):
-        self._init()
-        row = self._get_row()
-
-        while row != END_TOKEN:
-            self._send_filtered_columns([
-                    row[0], #Outcome
-                    row[1], #Date
-                    row[2], #Home team
-                    row[3], #Away team 
-                    row[4], #Points
-                    row[5]])#Shoot team
-
-            row = self._get_row()
-
-        self._send_filtered_columns(END_TOKEN)
-        self._close()
-        print('Finished filter columns')
-
-    def _close(self):
-        from time import sleep
-        sleep(20)
-        
-        self.frontend.close()
-        self.backend.close()
-        self.context.term()
+        super(FilterColumns, self).__init__(incoming_address, incoming_port, outgoing_address, outgoing_port, filter_columns)
