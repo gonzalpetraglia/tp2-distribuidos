@@ -7,13 +7,11 @@ from score import AcummulatedScore
 END_TOKEN = 'END'
 class SumUpGames(Process):
 
-    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, sink_address, sink_port, number_of_aggregator):
+    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, number_of_aggregator):
         self.incoming_address = incoming_address
         self.incoming_port = incoming_port
         self.outgoing_address = outgoing_address
-        self.outgoing_port = outgoing_port     
-        self.sink_address = sink_address
-        self.sink_port = sink_port   
+        self.outgoing_port = outgoing_port  
         self.number_of_aggregator = number_of_aggregator
         super(SumUpGames, self).__init__()
 
@@ -25,9 +23,6 @@ class SumUpGames(Process):
         
         self.backend = self.context.socket(zmq.PUSH)
         self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
-        
-        self.sinkSocket  = self.context.socket(zmq.PUSH)
-        self.sinkSocket.connect('tcp://{}:{}'.format(self.sink_address, self.sink_port))
 
     def _get_row(self):
         _, msg = self.frontend.recv_multipart()
@@ -38,9 +33,6 @@ class SumUpGames(Process):
 
     def _send_result(self, result):
         self.backend.send_json(result)
-
-    def _send_match(self, result):
-        self.sinkSocket.send_json(result)
 
     def run(self):
         self._init()
@@ -65,10 +57,8 @@ class SumUpGames(Process):
 
         for game in games:
             self._send_result(str(games.get(game)))
-            self._send_match("{}, {}".format(game, games.get(game)))
             
         self._send_result(END_TOKEN)
-        self._send_match(END_TOKEN)
         self._close()
 
     def _close(self):
@@ -79,7 +69,6 @@ class SumUpGames(Process):
         
         self.frontend.close()
         self.backend.close()
-        self.sinkSocket.close()
         self.context.term()
 
 

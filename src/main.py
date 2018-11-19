@@ -18,20 +18,20 @@ if __name__ == '__main__':
 
 
     print ('Started')
+    input_pipe.start()
     games_calculator.start()
     games_summarier.start()
     players_processer.start()
     points_summarier3.start()
     points_summarier2.start()
-    input_pipe.start()
 
-
+    input_pipe.join()
     games_calculator.join()
     games_summarier.join()
     players_processer.join()
-    points_summarier3.join()
     points_summarier2.join()
-    input_pipe.join()
+    points_summarier3.join()
+
 
 
 

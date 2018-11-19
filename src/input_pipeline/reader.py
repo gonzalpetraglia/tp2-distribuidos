@@ -7,7 +7,7 @@ import csv
 from source import Source
 
 END_TOKEN = 'END'
-INPUT_FILES_DIRECTORY = environ.get('INPUT_FILES_DIRECTORY', join(dirname(__file__), '../../../shot-log-complete'))
+INPUT_FILES_DIRECTORY = environ.get('INPUT_FILES_DIRECTORY', join(dirname(__file__), '../../../shot-log'))
 
 class Reader(Source):
 
@@ -26,13 +26,15 @@ class Reader(Source):
 
             for file_name in files_names:
                 csv_team = match(r'.*shot log (\w{3})\.csv$', file_name).group(1)
-                if _belongs_to_this_reader(csv_team):
-                    print(csv_team)
-                    with open(file_name, 'r') as f:
-                        shot_logs_reader = csv.DictReader(f)
-                        for line in shot_logs_reader: 
-                            line['shoot team'] = csv_team
-                            yield (line)
+                if not _belongs_to_this_reader(csv_team):
+                    continue
+
+                print(csv_team)
+                with open(file_name, 'r') as f:
+                    shot_logs_reader = csv.DictReader(f)
+                    for line in shot_logs_reader: 
+                        line['shoot team'] = csv_team
+                        yield (line)
 
         super(Reader, self).__init__(incoming_address, incoming_port, lines)
 

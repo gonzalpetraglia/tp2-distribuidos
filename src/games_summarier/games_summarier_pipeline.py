@@ -3,7 +3,7 @@ from collections import Counter
 import zmq
 from sink import Sink
 from .games_summarier import GamesSummarier
-from streamer import Streamer
+from streamer_subscriber import StreamerSubscriber
 
 class GamesSummarierPipeline(Process):
 
@@ -16,7 +16,7 @@ class GamesSummarierPipeline(Process):
 
     def run(self):
 
-        input_streamer = Streamer(self.incoming_address, self.incoming_port, '127.0.0.1', self.range_port_init, 10, 1)
+        input_streamer = StreamerSubscriber(self.incoming_address, self.incoming_port, '127.0.0.1', self.range_port_init, 1, 1)
         games_summarier = GamesSummarier('127.0.0.1', self.range_port_init, '127.0.0.1', self.range_port_init + 1)
         sink = Sink('127.0.0.1', self.range_port_init + 1, '%home-wins.txt')
         
