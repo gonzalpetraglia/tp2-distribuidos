@@ -6,9 +6,8 @@ class GamesSummarier(StatefulProcesserPuller):
         def init_state():
             return {"home wins": 0, "total games": 0}
         
-        def update_state(accumulator, score_string):
-
-            print(score_string + 'fsdaf')
+        def update_state(accumulator, game_string):
+            score_string = game_string.split(" ")[1]
             score = AcummulatedScore.from_string(score_string)
 
             accumulator["total games"] += 1 

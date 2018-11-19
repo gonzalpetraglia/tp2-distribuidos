@@ -1,75 +1,39 @@
-from multiprocessing import Process
+
+
 from collections import Counter
-import json
-import zmq
-
 from score import AcummulatedScore
-END_TOKEN = 'END'
-class SumUpGames(Process):
+from stateful_processer import StatefulProcesser
 
+
+class SumUpGames(StatefulProcesser):
     def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, number_of_aggregator):
-        self.incoming_address = incoming_address
-        self.incoming_port = incoming_port
-        self.outgoing_address = outgoing_address
-        self.outgoing_port = outgoing_port  
-        self.number_of_aggregator = number_of_aggregator
-        super(SumUpGames, self).__init__()
-
-    def _init(self):
-        self.context = zmq.Context()
-        self.frontend = self.context.socket(zmq.SUB)
-        self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
-        self.frontend.setsockopt_string(zmq.SUBSCRIBE, str(self.number_of_aggregator))
+        def init_state():
+            return Counter()
         
-        self.backend = self.context.socket(zmq.PUSH)
-        self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
+        def update_state(games, shot):
 
-    def _get_row(self):
-        _, msg = self.frontend.recv_multipart()
-        msg = msg.decode()
-        if msg != END_TOKEN:
-            msg = json.loads(msg)
-        return msg
-
-    def _send_result(self, result):
-        self.backend.send_json(result)
-
-    def run(self):
-        self._init()
-
-        row = self._get_row()
-
-        games = Counter()
-        while row != END_TOKEN:
-            date = row[0]
-            home_team = row[1]
-            away_team = row[2]
-            points = row[3]
-            shot_team =  row[4]
+            date = shot[0]
+            home_team = shot[1]
+            away_team = shot[2]
+            points = shot[3]
+            shot_team =  shot[4]
             key = '{}_{}_{}'.format(date, home_team, away_team)
-            points =  int(row[3])
+            points =  int(shot[3])
             if shot_team == home_team:
                 acummulated_score = AcummulatedScore(points, 0)
             else:
                 acummulated_score = AcummulatedScore(0, points)
             games.update({key: acummulated_score})
-            row = self._get_row()
 
-        for game in games:
-            self._send_result(str(games.get(game)))
-            
-        self._send_result(END_TOKEN)
-        self._close()
+        def get_summaries(games):
+            for game in games:
+                yield '{} {}'.format(game, str(games.get(game)))
 
-    def _close(self):
-        self.frontend.setsockopt_string(zmq.UNSUBSCRIBE, str(self.number_of_aggregator))
-
-        from time import sleep
-        sleep(20)
-        
-        self.frontend.close()
-        self.backend.close()
-        self.context.term()
-
-
-
+        super(SumUpGames, self).__init__(incoming_address, 
+                                            incoming_port,
+                                            outgoing_address,
+                                            outgoing_port,
+                                            number_of_aggregator,
+                                            init_state,
+                                            update_state,
+                                            get_summaries)

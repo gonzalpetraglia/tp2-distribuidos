@@ -8,7 +8,6 @@ from streamer import Streamer
 from streamer_subscriber import StreamerSubscriber
 from streamer_publisher import StreamerPublisher
 from sink_subscriber import SinkSubscriber
-from forwarder import Forwarder
 
 NUMBER_OF_FILTER_SCORED = 10
 NUMBER_OF_GAME_SUMMERS = 10

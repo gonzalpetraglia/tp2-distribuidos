@@ -31,7 +31,6 @@ class SinkSubscriber(Process):
                 output_file.write(result)
                 output_file.write('\n')
                 result = self._get_result()
-                print (result)
 
         self._close()
 

@@ -1,6 +1,5 @@
 
 from multiprocessing import Process
-from score import AcummulatedScore
 import zmq
 
 END_TOKEN = 'END'
