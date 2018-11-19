@@ -16,15 +16,12 @@ class GamesSummarierPipeline(Process):
 
     def run(self):
 
-        input_streamer = Streamer(self.incoming_address, self.incoming_port, '127.0.0.1', self.range_port_init, 10, 1)
             
-        games_summarier = GamesSummarier('127.0.0.1', self.range_port_init, '127.0.0.1', self.range_port_init + 1)
-        sink = Sink('127.0.0.1', self.range_port_init + 1, '%home-wins.txt')
+        games_summarier = GamesSummarier(self.incoming_address, self.incoming_port, '127.0.0.1', self.range_port_init)
+        sink = Sink('127.0.0.1', self.range_port_init, '%home-wins.txt')
         
         games_summarier.start()
-        input_streamer.start()
         sink.start()
         
         games_summarier.join()
-        input_streamer.join()
         sink.join()
