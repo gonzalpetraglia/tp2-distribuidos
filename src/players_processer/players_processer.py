@@ -40,9 +40,12 @@ class PlayersProcesser(Process):
         players_summers = []
         for i in range(NUMBER_OF_SUM_UP_PLAYERS):
             players_summers.append(SumUpPlayers('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5, i))
-        ranking_maker = RankingMaker('127.0.0.1', self.range_port_init + 5, '127.0.0.1', self.range_port_init + 6)
         
-        sink = Sink('127.0.0.1', self.range_port_init + 6, 'ranking-players.txt')
+        streamer_players  = Streamer('127.0.0.1', self.range_port_init + 5, '127.0.0.1', self.range_port_init + 6, NUMBER_OF_SUM_UP_PLAYERS, 1)
+      
+        ranking_maker = RankingMaker('127.0.0.1', self.range_port_init + 6, '127.0.0.1', self.range_port_init + 7)
+        
+        sink = Sink('127.0.0.1', self.range_port_init + 7, 'ranking-players.txt')
         
         streamer_input.start()
         for filter_columns in filters_columns:
@@ -53,12 +56,12 @@ class PlayersProcesser(Process):
         streamer_scored_goals.start()
         for players_summer in players_summers:
             players_summer.start()
+        streamer_players.start()
         ranking_maker.start()
         sink.start()
 
 
         streamer_input.join()
-
         for filter_columns in filters_columns:    
             filter_columns.join()
         streamer_filtered_columns.join()
@@ -67,5 +70,6 @@ class PlayersProcesser(Process):
         streamer_scored_goals.join()
         for player_summer in players_summers:
             players_summer.join()
+        streamer_players.join()
         ranking_maker.join()
         sink.join()

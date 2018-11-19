@@ -7,7 +7,7 @@ import csv
 from source import Source
 
 END_TOKEN = 'END'
-INPUT_FILES_DIRECTORY = environ.get('INPUT_FILES_DIRECTORY', join(dirname(__file__), '../../../shot-log'))
+INPUT_FILES_DIRECTORY = environ.get('INPUT_FILES_DIRECTORY', join(dirname(__file__), '../../../shot-log-complete'))
 
 class Reader(Source):
 

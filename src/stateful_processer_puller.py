@@ -18,7 +18,7 @@ class StatefulProcesserPuller(Process):
     def _init(self):
         self.context = zmq.Context()
         self.frontend = self.context.socket(zmq.PULL)
-        self.frontend.bind('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
+        self.frontend.connect('tcp://{}:{}'.format(self.incoming_address, self.incoming_port))
 
         self.backend = self.context.socket(zmq.PUSH)
         self.backend.connect('tcp://{}:{}'.format(self.outgoing_address, self.outgoing_port))
