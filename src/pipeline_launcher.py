@@ -4,17 +4,19 @@ from players_processer.players_processer import PlayersProcesser
 from points_summarier.points_summarier import PointsSummarier
 from input_pipeline.input_pipeline import Input
 from numerator import Numerator
+import json
 
 END_TOKEN = 'END'
 if __name__ == '__main__':
+    with open('src/config.json') as config_json:
+        config = json.load(config_json)
+    numerator_address, numerator_port = config['numerator_address'], config['numerator_port']
+    input_address, input_port = config['input_address'], config['input_port']
+    games_summarier_address, games_summarier_port = config['game_summarier_address'], config['game_summarier_port']
 
-    numerator_address, numerator_port = '127.0.0.1', 5557
-    input_address, input_port = '127.0.0.1', 2000
-    games_summarier_address, games_summarier_port = '127.0.0.1', 2001
 
-
-    input_pipe = Input(input_address, input_port, 2500)
-    games_calculator = GamesCalculator(input_address, input_port, games_summarier_address, games_summarier_port, 2400, numerator_address, numerator_port)
+    input_pipe = Input(config['input_pipe'], input_address, input_port)
+    games_calculator = GamesCalculator(config['games_calculator'], input_address, input_port, games_summarier_address, games_summarier_port, numerator_address, numerator_port)
     games_summarier = GamesSummarierPipeline(games_summarier_address, games_summarier_port, 2600)
     players_processer = PlayersProcesser(input_address, input_port, 2100, numerator_address, numerator_port)
     points_summarier2 = PointsSummarier(2, input_address, input_port, 2200)

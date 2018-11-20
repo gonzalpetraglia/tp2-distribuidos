@@ -16,39 +16,42 @@ NUMBER_OF_OUTPUT_FORWARDERS = 10
 NUMBER_OF_FILTERS_COLUMNS = 10
 class GamesCalculator(Process):
 
-    def __init__(self, incoming_address, incoming_port, outgoing_address, outgoing_port, range_port_init, numerator_address, numerator_port):
+    def __init__(self, config, incoming_address, incoming_port, outgoing_address, outgoing_port, numerator_address, numerator_port):
         self.incoming_address = incoming_address
         self.incoming_port = incoming_port
         self.outgoing_address = outgoing_address
         self.outgoing_port = outgoing_port
-        self.range_port_init = range_port_init
+        self.config = config
         self.numerator_address = numerator_address 
         self.numerator_port = numerator_port
         super(GamesCalculator, self).__init__()
 
 
     def run(self):
-        streamer_input = StreamerSubscriber(self.incoming_address, self.incoming_port, '127.0.0.1', self.range_port_init, 1, NUMBER_OF_FILTERS_COLUMNS)
+        address_used_internally = self.config['address_used_internally']
+        range_port_init = self.config['internal_range_port']
+
+        streamer_input = StreamerSubscriber(self.incoming_address, self.incoming_port, address_used_internally, range_port_init, 1, NUMBER_OF_FILTERS_COLUMNS)
 
         filters_columns = []        
         for i in range(NUMBER_OF_FILTER_SCORED):
-            filters_columns.append(FilterColumns('127.0.0.1', self.range_port_init, '127.0.0.1', self.range_port_init + 1))
+            filters_columns.append(FilterColumns(address_used_internally, range_port_init, address_used_internally, range_port_init + 1))
         
-        streamer_filtered_columns = Streamer('127.0.0.1', self.range_port_init + 1 , '127.0.0.1', self.range_port_init + 2, NUMBER_OF_FILTER_SCORED, NUMBER_OF_FILTER_SCORED)
+        streamer_filtered_columns = Streamer(address_used_internally, range_port_init + 1 , address_used_internally, range_port_init + 2, NUMBER_OF_FILTER_SCORED, NUMBER_OF_FILTER_SCORED)
         
         filters_scored = []
         for i in range(NUMBER_OF_FILTER_SCORED):
-            filters_scored.append(FilterScored('127.0.0.1', self.range_port_init + 2, '127.0.0.1', self.range_port_init + 3 ))
+            filters_scored.append(FilterScored(address_used_internally, range_port_init + 2, address_used_internally, range_port_init + 3 ))
         
-        streamer_scored_goals = StreamerPublisher('127.0.0.1', self.range_port_init + 3 , '127.0.0.1', self.range_port_init + 4, NUMBER_OF_FILTER_SCORED, NUMBER_OF_GAME_SUMMERS,
+        streamer_scored_goals = StreamerPublisher(address_used_internally, range_port_init + 3 , address_used_internally, range_port_init + 4, NUMBER_OF_FILTER_SCORED, NUMBER_OF_GAME_SUMMERS,
                                 lambda x: '{}_{}_{}'.format(x[0], x[1], x[2]))
         
         # Add subscriber here
         games_summers = []
         for i in range(NUMBER_OF_GAME_SUMMERS):
-            games_summers.append(SumUpGames('127.0.0.1', self.range_port_init + 4, '127.0.0.1', self.range_port_init + 5, self.numerator_address, self.numerator_port))
+            games_summers.append(SumUpGames(address_used_internally, range_port_init + 4, address_used_internally, range_port_init + 5, self.numerator_address, self.numerator_port))
         
-        streamer_games = StreamerPublisher('127.0.0.1', self.range_port_init + 5, self.outgoing_address, self.outgoing_port, NUMBER_OF_GAME_SUMMERS)
+        streamer_games = StreamerPublisher(address_used_internally, range_port_init + 5, self.outgoing_address, self.outgoing_port, NUMBER_OF_GAME_SUMMERS)
 
         sink = SinkSubscriber(self.outgoing_address, self.outgoing_port,  'games.txt')
 

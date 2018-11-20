@@ -1,0 +1,33 @@
+{
+    "input_pipe":
+        {
+            "reader": {
+                "folder": "../../../shot-log",
+                "filename_regex": "^.*shot log (\\w{3})\\.csv$"
+            },
+            "number_readers": 10,
+            "number_filter_columns": 10,
+            "address_used_internally": "127.0.0.1",
+            "internal_range_port": 2500
+        },
+    "games_calculator":
+        {
+            "address_used_internally": "127.0.0.1",
+            "internal_range_port": 2400,
+            "number_of_filter_scored": 10,
+            "number_of_game_summers": 10,
+            "number_of_filters_columns": 10,
+            "output_filename": "games.txt",
+            "sum_up_players": {
+                "service_name": "sum_up_players"
+            }
+
+        },
+    "input_address": "127.0.0.1",
+    "input_port": 2000,
+    "game_summarier_address": "127.0.0.1",
+    "game_summarier_port": 2001,
+    "numerator_address": "127.0.0.1",
+    "numerator_port": 2002
+
+}
