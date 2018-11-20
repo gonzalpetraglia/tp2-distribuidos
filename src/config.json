@@ -23,6 +23,36 @@
             }
 
         },
+    "games_summarier":
+        {
+            "address_used_internally": "127.0.0.1",
+            "internal_range_port": 2600
+        },
+    "players_processer":
+        {
+            "address_used_internally": "127.0.0.1",
+            "internal_range_port": 2100,
+            "number_of_filter_scored": 10,
+            "number_of_sum_up_players": 10,
+            "number_of_filters_columns": 10,
+            "output_filename": "ranking-players.txt"
+        },
+    "points_summarier2":
+        {
+            "address_used_internally": "127.0.0.1",
+            "internal_range_port": 2200,
+            "number_of_filters_by_score": 10,
+            "number_of_filters_columns": 10,
+            "output_filename": "%-2pts.txt"
+        },
+    "points_summarier3":
+        {
+            "address_used_internally": "127.0.0.1",
+            "internal_range_port": 2300,
+            "number_of_filters_by_score": 10,
+            "number_of_filters_columns": 10,
+            "output_filename": "%-3pts.txt"
+        },
     "input_address": "127.0.0.1",
     "input_port": 2000,
     "game_summarier_address": "127.0.0.1",

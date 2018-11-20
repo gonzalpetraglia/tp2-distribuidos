@@ -17,10 +17,10 @@ if __name__ == '__main__':
 
     input_pipe = Input(config['input_pipe'], input_address, input_port)
     games_calculator = GamesCalculator(config['games_calculator'], input_address, input_port, games_summarier_address, games_summarier_port, numerator_address, numerator_port)
-    games_summarier = GamesSummarierPipeline(games_summarier_address, games_summarier_port, 2600)
-    players_processer = PlayersProcesser(input_address, input_port, 2100, numerator_address, numerator_port)
-    points_summarier2 = PointsSummarier(2, input_address, input_port, 2200)
-    points_summarier3 = PointsSummarier(3, input_address, input_port, 2300)
+    games_summarier = GamesSummarierPipeline(config['games_summarier'], games_summarier_address, games_summarier_port)
+    players_processer = PlayersProcesser(config['players_processer'], input_address, input_port, numerator_address, numerator_port)
+    points_summarier2 = PointsSummarier(config['points_summarier2'], 2, input_address, input_port)
+    points_summarier3 = PointsSummarier(config['points_summarier3'], 3, input_address, input_port)
     numerator = Numerator(numerator_address, numerator_port)
 
 
