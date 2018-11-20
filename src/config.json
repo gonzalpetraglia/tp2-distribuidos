@@ -2,7 +2,7 @@
     "input_pipe":
         {
             "reader": {
-                "folder": "../../../shot-log",
+                "folder": "../../../shot-log-complete",
                 "filename_regex": "^.*shot log (\\w{3})\\.csv$"
             },
             "number_readers": 10,
@@ -18,8 +18,8 @@
             "number_of_game_summers": 10,
             "number_of_filters_columns": 10,
             "output_filename": "games.txt",
-            "sum_up_players": {
-                "service_name": "sum_up_players"
+            "sum_up_games": {
+                "service_name": "sum_up_games"
             }
 
         },
@@ -35,7 +35,10 @@
             "number_of_filter_scored": 10,
             "number_of_sum_up_players": 10,
             "number_of_filters_columns": 10,
-            "output_filename": "ranking-players.txt"
+            "output_filename": "ranking-players.txt",
+            "sum_up_players": {
+                "service_name": "sum_up_players"
+            }
         },
     "points_summarier2":
         {

@@ -46,7 +46,7 @@ class PlayersProcesser(Process):
         # Add subscriber here
         players_summers = []
         for i in range(number_of_sum_up_players):
-            players_summers.append(SumUpPlayers(address_used_internally, range_port_init + 4, address_used_internally, range_port_init + 5, self.numerator_address, self.numerator_port))
+            players_summers.append(SumUpPlayers(self.config['sum_up_players'], address_used_internally, range_port_init + 4, address_used_internally, range_port_init + 5, self.numerator_address, self.numerator_port))
         
         streamer_players  = Streamer(address_used_internally, range_port_init + 5, address_used_internally, range_port_init + 6, number_of_sum_up_players, 1)
       

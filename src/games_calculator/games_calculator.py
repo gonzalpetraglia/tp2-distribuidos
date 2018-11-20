@@ -48,7 +48,7 @@ class GamesCalculator(Process):
         # Add subscriber here
         games_summers = []
         for i in range(number_of_game_summers):
-            games_summers.append(SumUpGames(address_used_internally, range_port_init + 4, address_used_internally, range_port_init + 5, self.numerator_address, self.numerator_port))
+            games_summers.append(SumUpGames(self.config['sum_up_games'], address_used_internally, range_port_init + 4, address_used_internally, range_port_init + 5, self.numerator_address, self.numerator_port))
         
         streamer_games = StreamerPublisher(address_used_internally, range_port_init + 5, self.outgoing_address, self.outgoing_port, number_of_game_summers)
 
